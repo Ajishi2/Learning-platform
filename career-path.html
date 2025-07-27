@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Path Explorer - Learning Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #3a3043;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Header and Sidebar (same as previous pages) */
+        .header {
+            background: #3a3043;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            background: white;
+            color: #3a3043;
+            width: 50px;
+            height: 35px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: -1px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-3px); }
+        }
+
+        .nav-tabs {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-tab {
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #3a3043;
+            font-weight: 600;
+        }
+
+        .nav-tab:hover:not(.active) {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            max-width: 500px;
+            margin: 0 40px;
+        }
+
+        .search-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-bar {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 12px 50px 12px 45px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .add-btn {
+            background: white;
+            color: #3a3043;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .add-icon {
+            width: 20px;
+            height: 20px;
+            background: #3a3043;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 80px;
+            bottom: 0;
+            width: 80px;
+            background: #3a3043;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+            gap: 25px;
+            z-index: 999;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-item {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .sidebar-item.active {
+            background: white;
+            color: #3a3043;
+        }
+
+        .sidebar-item i {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-item.active i {
+            color: #3a3043;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: auto;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 80px;
+            margin-top: 80px;
+            padding: 40px;
+            min-height: calc(100vh - 80px);
+            position: relative;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-title {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2); }
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Career Path Map */
+        .career-map-container {
+            background: #5b5464;
+            border-radius: 30px;
+            padding: 50px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease;
+            animation-delay: 0.2s;
+            animation-fill-mode: both;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .career-map-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.02), transparent);
+            animation: shimmer 4s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .map-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Career Path Visualization */
+        .career-path {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            margin-bottom: 40px;
+        }
+
+        .career-role {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            animation: roleFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes roleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .career-role:nth-child(1) { animation-delay: 0s; }
+        .career-role:nth-child(2) { animation-delay: 0.5s; }
+        .career-role:nth-child(3) { animation-delay: 1s; }
+        .career-role:nth-child(4) { animation-delay: 1.5s; }
+
+        .career-role::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .career-role:hover::before {
+            left: 100%;
+        }
+
+        .career-role:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .career-role.current {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.1);
+            animation: currentRolePulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes currentRolePulse {
+            from { box-shadow: 0 0 20px rgba(78, 205, 196, 0.3); }
+            to { box-shadow: 0 0 30px rgba(78, 205, 196, 0.6); }
+        }
+
+        .role-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 25px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+            position: relative;
+            animation: iconBounce 3s ease-in-out infinite;
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(5deg); }
+        }
+
+        .role-icon.ml-engineer { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .role-icon.data-scientist { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .role-icon.mlops { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .role-icon.researcher { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+        .role-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .role-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 15px;
+        }
+
+        .skill-match {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .skill-match.high { background: rgba(76, 175, 80, 0.3); color: #4CAF50; }
+        .skill-match.medium { background: rgba(255, 167, 38, 0.3); color: #ffa726; }
+        .skill-match.low { background: rgba(255, 107, 107, 0.3); color: #ff6b6b; }
+
+        /* Connection Lines */
+        .connection-line {
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            animation: lineGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes lineGlow {
+            from { box-shadow: 0 0 10px rgba(78, 205, 196, 0.5); }
+            to { box-shadow: 0 0 20px rgba(78, 205, 196, 0.8); }
+        }
+
+        .line-1 { left: 25%; width: 25%; }
+        .line-2 { left: 50%; width: 25%; }
+        .line-3 { left: 75%; width: 25%; }
+
+        /* Role Detail Panel */
+        .role-detail-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            padding: 40px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            animation: panelSlideDown 0.5s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes panelSlideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: white;
+        }
+
+        .panel-info h3 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .panel-info p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+
+        .panel-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        /* Skills Alignment Chart */
+        .skills-alignment {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .alignment-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-alignment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .skill-alignment-item:last-child {
+            border-bottom: none;
+        }
+
+        .skill-name-align {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .skill-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            margin: 0 15px;
+        }
+
+        .progress-bar-align {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill-align {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s ease;
+            position: relative;
+        }
+
+        .progress-fill-align::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: progressShine 2s linear infinite;
+        }
+
+        @keyframes progressShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .progress-high { background: linear-gradient(90deg, #4CAF50, #45a049); }
+        .progress-medium { background: linear-gradient(90deg, #ffa726, #ffcc02); }
+        .progress-low { background: linear-gradient(90deg, #ff6b6b, #ff8e8e); }
+
+        .skill-percentage {
+            font-size: 12px;
+            font-weight: 700;
+            min-width: 35px;
+            text-align: right;
+        }
+
+        /* Transition Roadmap */
+        .transition-roadmap {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .roadmap-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .roadmap-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border-left: 3px solid;
+            transition: all 0.3s ease;
+        }
+
+        .roadmap-step:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+
+        .roadmap-step.high-priority { border-left-color: #ff6b6b; }
+        .roadmap-step.medium-priority { border-left-color: #ffa726; }
+        .roadmap-step.low-priority { border-left-color: #4CAF50; }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            flex-shrink: 0;
+            color: white;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .step-timeline {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Overall Match Score */
+        .match-score-container {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .match-score {
+            display: inline-block;
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(#4ecdc4 0deg 252deg, rgba(255, 255, 255, 0.1) 252deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: scoreRotate 2s ease-in-out;
+        }
+
+        @keyframes scoreRotate {
+            from { transform: rotate(-90deg); }
+            to { transform: rotate(0deg); }
+        }
+
+        .score-inner {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #5b5464;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: #4ecdc4;
+            animation: countUp 2s ease-out;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .score-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-description {
+            margin-top: 15px;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Action Buttons */
+        .panel-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn.primary:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+        }
+
+        .action-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .career-path {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 40px;
+            }
+            
+            .connection-line {
+                display: none;
+            }
+            
+            .panel-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .career-path {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .career-map-container {
+                padding: 30px 20px;
+            }
+            
+            .role-detail-panel {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">CC</div>
+            <div class="nav-tabs" id="navTabs">
+                <button class="nav-tab active" id="tab-creator">Mentor</button>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-bar" placeholder="Skills">
+            </div>
+        </div>
+        <div class="header-right">
+            <button class="add-btn">
+                <div class="add-icon">+</div>
+                Add Skill
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-item" onclick="window.location.href='design.html'">
+            <i class="fas fa-home"></i>
+        </div>
+        <div class="sidebar-item" onclick="window.location.href='skill-gap-finder.html'">
+            <i class="fas fa-edit"></i>
+        </div>
+        <div class="sidebar-item active">
+            <i class="fas fa-gift"></i>
+            <div class="notification-dot"></div>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-chart-pie"></i>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-bookmark"></i>
+        </div>
+        <div class="sidebar-item">
+            <i class="fas fa-cog"></i>
+        </div>
+        <div class="user-avatar">
+            👩‍💻
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">🗺️ Career Path Explorer</h1>
+            <p class="page-subtitle">
+                Discover your ideal career path in Machine Learning. See how your skills align with different roles 
+                and get personalized roadmaps to reach your goals.
+            </p>
+        </div>
+
+        <!-- Career Path Map -->
+        <div class="career-map-container">
+            <h2 class="map-title">Your ML Career Journey</h2>
+            
+
+            
+            <!-- Career Roles -->
+            <div class="career-path">
+                <div class="career-role current" data-role="ml-engineer">
+                    <div class="role-icon ml-engineer">🤖</div>
+                    <div class="role-title">ML Engineer</div>
+                    <div class="role-subtitle">Build & Deploy Models</div>
+                    <div class="skill-match high">70% Match</div>
+                </div>
+                
+                <div class="career-role" data-role="data-scientist">
+                    <div class="role-icon data-scientist">📊</div>
+                    <div class="role-title">Data Scientist</div>
+                    <div class="role-subtitle">Extract Insights</div>
+                    <div class="skill-match medium">60% Match</div>
+                </div>
+                
+                <div class="career-role" data-role="mlops">
+                    <div class="role-icon mlops">⚙️</div>
+                    <div class="role-title">MLOps Engineer</div>
+                    <div class="role-subtitle">Scale ML Systems</div>
+                    <div class="skill-match low">45% Match</div>
+                </div>
+                
+                <div class="career-role" data-role="researcher">
+                    <div class="role-icon researcher">🔬</div>
+                    <div class="role-title">ML Researcher</div>
+                    <div class="role-subtitle">Advance the Field</div>
+                    <div class="skill-match medium">55% Match</div>
+                </div>
+            </div>
+
+            <!-- Role Detail Panel -->
+            <div class="role-detail-panel" id="roleDetailPanel">
+                <div class="panel-header">
+                    <div class="panel-icon ml-engineer" id="panelIcon">🤖</div>
+                    <div class="panel-info">
+                        <h3 id="panelTitle">ML Engineer</h3>
+                        <p id="panelDescription">Build scalable machine learning systems and deploy models to production environments.</p>
+                    </div>
+                </div>
+
+                <!-- Overall Match Score -->
+                <div class="match-score-container">
+                    <div class="match-score">
+                        <div class="score-circle" id="scoreCircle">
+                            <div class="score-inner">
+                                <div class="score-number" id="scoreNumber">70%</div>
+                                <div class="score-label">Match</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="score-description" id="scoreDescription">
+                        Great fit! You have most of the required skills with some areas to improve.
+                    </div>
+                </div>
+
+                <div class="panel-content">
+                    <!-- Skills Alignment -->
+                    <div class="skills-alignment">
+                        <div class="alignment-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Skills Alignment
+                        </div>
+                        <div id="skillsAlignmentList">
+                            <!-- Skills will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Transition Roadmap -->
+                    <div class="transition-roadmap">
+                        <div class="roadmap-title">
+                            <i class="fas fa-route"></i>
+                            Transition Roadmap
+                        </div>
+                        <div id="roadmapSteps">
+                            <!-- Roadmap steps will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="panel-actions">
+                    <button class="action-btn primary">
+                        <i class="fas fa-rocket"></i>
+                        Start Learning Path
+                    </button>
+                    <button class="action-btn secondary">
+                        <i class="fas fa-bookmark"></i>
+                        Save to Goals
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Career roles data
+        const careerRoles = {
+            'ml-engineer': {
+                title: 'ML Engineer',
+                description: 'Build scalable machine learning systems and deploy models to production environments.',
+                icon: '🤖',
+                iconClass: 'ml-engineer',
+                matchScore: 70,
+                skills: [
+                    { name: 'Python', current: 85, required: 90, match: 94 },
+                    { name: 'Machine Learning', current: 75, required: 85, match: 88 },
+                    { name: 'Deep Learning', current: 70, required: 80, match: 88 },
+                    { name: 'AWS/Cloud', current: 40, required: 80, match: 50 },
+                    { name: 'Docker', current: 30, required: 75, match: 40 },
+                    { name: 'Kubernetes', current: 20, required: 70, match: 29 },
+                    { name: 'MLOps', current: 35, required: 85, match: 41 },
+                    { name: 'API Development', current: 60, required: 75, match: 80 }
+                ],
+                roadmap: [
+                    {
+                        step: 1,
+                        title: 'Master Cloud Platforms',
+                        description: 'Learn AWS SageMaker, EC2, and S3 for ML model deployment and data management.',
+                        timeline: '6-8 weeks',
+                        priority: 'high-priority'
+                    },
+                    {
+                        step: 2,
+                        title: 'Container Technologies',
+                        description: 'Gain proficiency in Docker and Kubernetes for scalable ML system deployment.',
+                        timeline: '4-6 weeks',
+                        priority: 'high-priority'
+                    },
+                    {
+                        step: 3,
+                        title: 'MLOps Pipeline',
+                        description: 'Build end-to-end ML pipelines with CI/CD, monitoring, and automated retraining.',
+                        timeline: '8-10 weeks',
+                        priority: 'medium-priority'
+                    },
+                    {
+                        step: 4,
+                        title: 'Advanced API Design',
+                        description: 'Develop robust, scalable APIs for serving ML models with proper error handling.',
+                        timeline: '3-4 weeks',
+                        priority: 'medium-priority'
+                    }
+                ]
+            },
+            'data-scientist': {
+                title: 'Data Scientist',
+                description: 'Extract actionable insights from data using statistical analysis and machine learning techniques.',
+                icon: '📊',
+                iconClass: 'data-scientist',
+                matchScore: 60,
+                skills: [
+                    { name: 'Python', current: 85, required: 85, match: 100 },
+                    { name: 'Statistics', current: 65, required: 90, match: 72 },
+                    { name: 'Data Visualization', current: 70, required: 85, match: 82 },
+                    { name: 'SQL', current: 80, required: 90, match: 89 },
+                    { name: 'R Programming', current: 30, required: 70, match: 43 },
+                    { name: 'Business Intelligence', current: 40, required: 80, match: 50 },
+                    { name: 'Experimentation', current: 35, required: 75, match: 47 },
+                    { name: 'Communication', current: 60, required: 85, match: 71 }
+                ],
+                roadmap: [
+                    {
+                        step: 1,
+                        title: 'Advanced Statistics',
+                        description: 'Master statistical concepts including hypothesis testing, regression analysis, and Bayesian methods.',
+                        timeline: '8-10 weeks',
+                        priority: 'high-priority'
+                    },
+                    {
+                        step: 2,
+                        title: 'R Programming',
+                        description: 'Learn R for statistical computing and advanced data analysis techniques.',
+                        timeline: '6-8 weeks',
+                        priority: 'medium-priority'
+                    },
+                    {
+                        step: 3,
+                        title: 'Business Acumen',
+                        description: 'Develop business understanding and learn to translate data insights into business value.',
+                        timeline: '4-6 weeks',
+                        priority: 'high-priority'
+                    },
+                    {
+                        step: 4,
+                        title: 'A/B Testing',
+                        description: 'Master experimental design, A/B testing, and causal inference methods.',
+                        timeline: '5-7 weeks',
+                        priority: 'medium-priority'
+                    }
+                ]
+            },
+            'mlops': {
+                title: 'MLOps Engineer',
+                description: 'Scale machine learning systems with robust infrastructure, monitoring, and automated workflows.',
+                icon: '⚙️',
+                iconClass: 'mlops',
+                matchScore: 45,
+                skills: [
+                    { name: 'DevOps', current: 40, required: 90, match: 44 },
+                    { name: 'Docker', current: 30, required: 85, match: 35 },
+                    { name: 'Kubernetes', current: 20, required: 85, match: 24 },
+                    { name: 'CI/CD', current: 35, required: 80, match: 44 },
+                    { name: 'Monitoring', current: 25, required: 80, match: 31 },
+                    { name: 'Infrastructure as Code', current: 20, required: 75, match: 27 },
+                    { name: 'Cloud Platforms', current: 40, required: 90, match: 44 },
+                    { name: 'Python', current: 85, required: 80, match: 100 }
+                ],
+                roadmap: [
+                    {
+                        step: 1,
+                        title: 'DevOps Fundamentals',
+                        description: 'Learn core DevOps practices, version control, and collaborative development workflows.',
+                        timeline: '6-8 weeks',
+                        priority: 'high-priority'
+                    },
+                    {
+                        step: 2,
+                        title: 'Container Orchestration',
+                        description: 'Master Docker and Kubernetes for containerized ML application deployment.',
+                        timeline: '8-10 weeks',
+                        priority: 'high-priority'
+                    },
+                    {
+                        step: 3,
+                        title: 'Infrastructure as Code',
+                        description: 'Learn Terraform and cloud infrastructure automation for scalable ML systems.',
+                        timeline: '6-8 weeks',
+                        priority: 'high-priority'
+                    },
+                    {
+                        step: 4,
+                        title: 'Monitoring & Observability',
+                        description: 'Implement comprehensive monitoring, logging, and alerting for ML systems.',
+                        timeline: '4-6 weeks',
+                        priority: 'medium-priority'
+                    }
+                ]
+            },
+            'researcher': {
+                title: 'ML Researcher',
+                description: 'Push the boundaries of machine learning through novel algorithms and theoretical contributions.',
+                icon: '🔬',
+                iconClass: 'researcher',
+                matchScore: 55,
+                skills: [
+                    { name: 'Mathematics', current: 70, required: 95, match: 74 },
+                    { name: 'Research Methods', current: 50, required: 90, match: 56 },
+                    { name: 'Deep Learning', current: 70, required: 95, match: 74 },
+                    { name: 'Paper Writing', current: 40, required: 85, match: 47 },
+                    { name: 'PyTorch/TensorFlow', current: 75, required: 90, match: 83 },
+                    { name: 'Statistics', current: 65, required: 90, match: 72 },
+                    { name: 'Experimentation', current: 35, required: 85, match: 41 },
+                    { name: 'PhD/Advanced Degree', current: 0, required: 80, match: 0 }
+                ],
+                roadmap: [
+                    {
+                        step: 1,
+                        title: 'Advanced Mathematics',
+                        description: 'Strengthen linear algebra, calculus, probability theory, and optimization methods.',
+                        timeline: '12-16 weeks',
+                        priority: 'high-priority'
+                    },
+                    {
+                        step: 2,
+                        title: 'Research Methodology',
+                        description: 'Learn scientific research methods, experimental design, and literature review techniques.',
+                        timeline: '8-10 weeks',
+                        priority: 'high-priority'
+                    },
+                    {
+                        step: 3,
+                        title: 'Academic Writing',
+                        description: 'Develop skills in technical writing, paper structure, and academic communication.',
+                        timeline: '6-8 weeks',
+                        priority: 'medium-priority'
+                    },
+                    {
+                        step: 4,
+                        title: 'Consider Graduate Studies',
+                        description: 'Explore PhD programs or research positions to gain formal research credentials.',
+                        timeline: '2-6 years',
+                        priority: 'low-priority'
+                    }
+                ]
+            }
+        };
+
+        // Function to update score circle
+        function updateScoreCircle(percentage) {
+            const circle = document.getElementById('scoreCircle');
+            const degrees = (percentage / 100) * 360;
+            circle.style.background = `conic-gradient(#4ecdc4 0deg ${degrees}deg, rgba(255, 255, 255, 0.1) ${degrees}deg 360deg)`;
+        }
+
+        // Function to get color class based on match percentage
+        function getMatchColorClass(percentage) {
+            if (percentage >= 70) return 'progress-high';
+            if (percentage >= 50) return 'progress-medium';
+            return 'progress-low';
+        }
+
+        // Function to show role details
+        function showRoleDetails(roleKey) {
+            const role = careerRoles[roleKey];
+            if (!role) return;
+
+            // Update panel header
+            document.getElementById('panelIcon').textContent = role.icon;
+            document.getElementById('panelIcon').className = `panel-icon ${role.iconClass}`;
+            document.getElementById('panelTitle').textContent = role.title;
+            document.getElementById('panelDescription').textContent = role.description;
+
+            // Update match score
+            document.getElementById('scoreNumber').textContent = `${role.matchScore}%`;
+            updateScoreCircle(role.matchScore);
+            
+            const scoreDesc = document.getElementById('scoreDescription');
+            if (role.matchScore >= 70) {
+                scoreDesc.textContent = "Great fit! You have most of the required skills with some areas to improve.";
+            } else if (role.matchScore >= 50) {
+                scoreDesc.textContent = "Good potential! Focus on developing key skills to improve your match.";
+            } else {
+                scoreDesc.textContent = "This role requires significant skill development, but it's achievable with dedicated learning.";
+            }
+
+            // Update skills alignment
+            const skillsList = document.getElementById('skillsAlignmentList');
+            skillsList.innerHTML = role.skills.map(skill => `
+                <div class="skill-alignment-item">
+                    <div class="skill-name-align">${skill.name}</div>
+                    <div class="skill-progress">
+                        <div class="progress-bar-align">
+                            <div class="progress-fill-align ${getMatchColorClass(skill.match)}" style="width: ${skill.match}%"></div>
+                        </div>
+                    </div>
+                    <div class="skill-percentage">${skill.match}%</div>
+                </div>
+            `).join('');
+
+            // Update roadmap
+            const roadmapSteps = document.getElementById('roadmapSteps');
+            roadmapSteps.innerHTML = role.roadmap.map(step => `
+                <div class="roadmap-step ${step.priority}">
+                    <div class="step-number">${step.step}</div>
+                    <div class="step-content">
+                        <div class="step-title">${step.title}</div>
+                        <div class="step-description">${step.description}</div>
+                        <div class="step-timeline">
+                            <i class="fas fa-clock"></i>
+                            ${step.timeline}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Show panel
+            document.getElementById('roleDetailPanel').style.display = 'block';
+            
+            // Update active role
+            document.querySelectorAll('.career-role').forEach(role => role.classList.remove('current'));
+            document.querySelector(`[data-role="${roleKey}"]`).classList.add('current');
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click listeners to career roles
+            document.querySelectorAll('.career-role').forEach(role => {
+                role.addEventListener('click', function() {
+                    const roleKey = this.getAttribute('data-role');
+                    showRoleDetails(roleKey);
+                });
+            });
+
+            // Show ML Engineer details by default
+            showRoleDetails('ml-engineer');
+
+            // Add action button functionality
+            document.querySelector('.action-btn.primary').addEventListener('click', function() {
+                this.innerHTML = '<i class="fas fa-check"></i> Added to Learning Plan';
+                this.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+                
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-rocket"></i> Start Learning Path';
+                    this.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                }, 3000);
+            });
+
+            document.querySelector('.action-btn.secondary').addEventListener('click', function() {
+                this.innerHTML = '<i class="fas fa-check"></i> Saved';
+                this.style.background = 'rgba(76, 175, 80, 0.3)';
+                this.style.color = '#4CAF50';
+                
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-bookmark"></i> Save to Goals';
+                    this.style.background = 'rgba(255, 255, 255, 0.1)';
+                    this.style.color = 'white';
+                }, 3000);
+            });
+
+            // Add search functionality
+            const searchBar = document.querySelector('.search-bar');
+            searchBar.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const roles = document.querySelectorAll('.career-role');
+                
+                roles.forEach(role => {
+                    const title = role.querySelector('.role-title').textContent.toLowerCase();
+                    const subtitle = role.querySelector('.role-subtitle').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || subtitle.includes(searchTerm)) {
+                        role.style.display = 'block';
+                        role.style.animation = 'roleFloat 0.5s ease';
+                    } else {
+                        role.style.display = searchTerm ? 'none' : 'block';
+                    }
+                });
+            });
+
+            // Add hover effects
+            document.querySelectorAll('.career-role').forEach(role => {
+                role.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.05)';
+                });
+                
+                role.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('current')) {
+                        this.style.transform = 'translateY(0) scale(1)';
+                    }
+                });
+            });
+
+            // Animate progress bars when panel is shown
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const progressBars = entry.target.querySelectorAll('.progress-fill-align');
+                        progressBars.forEach((bar, index) => {
+                            setTimeout(() => {
+                                bar.style.animation = 'progressShine 2s linear infinite';
+                            }, index * 100);
+                        });
+                    }
+                });
+            });
+
+            observer.observe(document.getElementById('roleDetailPanel'));
+        });
+    </script>
+</body>
+</html>
